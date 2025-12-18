@@ -31,7 +31,7 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:9200"]
 
   migrate:
-    build: .
+    build: ./backend
     command: npm run db:migrate
     env_file:
       - .env
@@ -40,7 +40,7 @@ services:
         condition: service_healthy
 
   seed:
-    build: .
+    build: ./backend
     command: npm run db:seed
     env_file:
       - .env
@@ -51,8 +51,7 @@ services:
         condition: service_started
 
   api:
-    build:
-      context: .
+    build: ./backend
     container_name: news-server
     env_file:
       - .env
@@ -69,9 +68,17 @@ services:
         condition: service_completed_successfully
     command: npm run start:api
 
+  frontend:
+    build: ./frontend
+    container_name: news-frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      api:
+        condition: service_started
+
   worker:
-    build:
-      context: .
+    build: ./backend
     container_name: news-worker
     env_file:
       - .env

@@ -1,11 +1,22 @@
+import cors from "cors";
 import express from "express";
+
 import { initRabbitMQ } from "../sharedFunction/rabbitMQ/connection.js";
 import sequelize from "../sharedFunction/database/connection.js";
 import router from "./router/router.js";
+
 import "dotenv/config";
 
 const app = express();
-const port = process.env.PORT_SERVICE || 3000;
+const port = process.env.BACKEND_PORT;
+
+app.use(
+  cors({
+    origin: process.env.CLIENT_BASE_URL,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 app.use(express.json());
 
